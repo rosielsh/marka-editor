@@ -7,12 +7,28 @@ assignees: rosielsh
 
 ---
 
-## 🚧 Description
-<!-- Fill out the description-->
+### Description
 
+- A clear and concise description of the issue.
 
-## ✅ Todo
-- [] 
+### Type of Issue
 
-## 🛠️Reference
-<!-- Write contents of shoveling, such as the blog you referenced or what you realized -->
+- [ ] Bug Report
+- [ ] Feature Request
+- [ ] Question
+
+### Expected Behavior
+
+- A clear and concise description of what you expected to happen.
+
+### Actual Behavior
+
+- A clear and concise description of what actually happened.
+
+### Screenshots
+
+- If applicable, add screenshots to help explain your problem.
+
+### Additional Context
+
+- Add any other context or information about the issue here.
