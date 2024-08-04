@@ -3,32 +3,18 @@ name: Feature request
 about: Suggest an idea for this project
 title: ''
 labels: ''
-assignees: rosielsh
+assignees: ''
 
 ---
 
-### Description
+**Is your feature request related to a problem? Please describe.**
+A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
 
-- A clear and concise description of the issue.
+**Describe the solution you'd like**
+A clear and concise description of what you want to happen.
 
-### Type of Issue
+**Describe alternatives you've considered**
+A clear and concise description of any alternative solutions or features you've considered.
 
-- [ ] Bug Report
-- [ ] Feature Request
-- [ ] Question
-
-### Expected Behavior
-
-- A clear and concise description of what you expected to happen.
-
-### Actual Behavior
-
-- A clear and concise description of what actually happened.
-
-### Screenshots
-
-- If applicable, add screenshots to help explain your problem.
-
-### Additional Context
-
-- Add any other context or information about the issue here.
+**Additional context**
+Add any other context or screenshots about the feature request here.
