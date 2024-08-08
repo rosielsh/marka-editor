@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import MKEditorTextarea from '../MKEditorTextArea/mkeditor-textarea';
+import { MKEditorTextArea } from '../mkeditor-textarea';
 import MKEditorRoot, { IRootProps } from './mkeditor-root';
 
 const meta: Meta<typeof MKEditorRoot> = {
@@ -31,7 +31,7 @@ export const CustomContent: Story = {
 export const WithTextArea: Story = {
   render: (args: IRootProps) => (
     <MKEditorRoot {...args}>
-      <MKEditorTextarea />
+      <MKEditorTextArea />
     </MKEditorRoot>
   ),
 };

@@ -1,4 +1,4 @@
-import { useEditor } from '../utils/useEditor';
+import { useEditor } from '../utils/use-editor';
 
 const MKEditorTextarea = () => {
   const { markdownText, updateMarkdownText } = useEditor();
