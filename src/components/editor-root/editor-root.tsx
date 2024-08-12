@@ -11,7 +11,7 @@ export interface IRootProps {
   children: React.ReactNode;
 }
 
-const MKEditorRoot = ({ children }: IRootProps) => {
+const EditorRoot = ({ children }: IRootProps) => {
   const [markdownText, setMarkdownText] = useState<string>(''); // internally managed state
 
   const updateMarkdownText = (text: string) => {
@@ -25,4 +25,4 @@ const MKEditorRoot = ({ children }: IRootProps) => {
   );
 };
 
-export default MKEditorRoot;
+export default EditorRoot;

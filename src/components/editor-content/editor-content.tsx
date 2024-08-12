@@ -1,6 +1,6 @@
 import { useEditor } from '../utils/use-editor';
 
-const MKEditorTextarea = () => {
+const EditorContent = () => {
   const { markdownText, updateMarkdownText } = useEditor();
   return (
     <div>
@@ -10,4 +10,4 @@ const MKEditorTextarea = () => {
   );
 };
 
-export default MKEditorTextarea;
+export default EditorContent;

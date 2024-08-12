@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { EditorContext } from '../mkeditor-root/mkeditor-root';
+import { EditorContext } from '../editor-root/editor-root';
 
 // Encapsulates logic to get values from EditorContext
 export const useEditor = () => {
