@@ -1,28 +1,14 @@
-import { createContext, useState } from 'react';
+import useEditorState from '@/hooks/useEditorState';
+import EditorRootContextProvider from '@/providers/EditorRootContextProvider';
 
-export interface IContext {
-  markdownText: string;
-  updateMarkdownText: (text: string) => void;
-}
-
-export const EditorContext = createContext<IContext | undefined>(undefined);
-
-export interface IRootProps {
+export interface EditorRootProps {
   children: React.ReactNode;
 }
 
-const EditorRoot = ({ children }: IRootProps) => {
-  const [markdownText, setMarkdownText] = useState<string>(''); // internally managed state
+const EditorRoot = ({ children }: EditorRootProps) => {
+  const editorState = useEditorState();
 
-  const updateMarkdownText = (text: string) => {
-    setMarkdownText(text);
-  };
-
-  return (
-    <EditorContext.Provider value={{ markdownText, updateMarkdownText }}>
-      <div className="roots">{children}</div>
-    </EditorContext.Provider>
-  );
+  return <EditorRootContextProvider value={editorState}>{children}</EditorRootContextProvider>;
 };
 
 export default EditorRoot;
