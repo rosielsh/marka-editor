@@ -1,1 +1,1 @@
-export { default as EditorRoot } from './editor-root';
+export { default as Root } from './editor-root';

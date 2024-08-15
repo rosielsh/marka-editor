@@ -1,5 +1,11 @@
+import * as Editor from './components';
+
 function App() {
-  return <></>;
+  return (
+    <Editor.Root>
+      <Editor.Content />
+    </Editor.Root>
+  );
 }
 
 export default App;
