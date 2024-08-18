@@ -1,12 +1,14 @@
-import { EditorContext, IContext } from '@/contexts/EditorContext';
+import { EditorContext } from '@/contexts/EditorContext';
+import useEditorState from '@/hooks/useEditorState';
 
 export interface EditorRootContextProviderProps {
   children: React.ReactNode;
-  value: IContext;
+  initialContent?: string;
 }
 
-const EditorRootContextProvider = ({ value, children }: EditorRootContextProviderProps) => {
-  return <EditorContext.Provider value={value}>{children}</EditorContext.Provider>;
+const EditorRootContextProvider = ({ initialContent, children }: EditorRootContextProviderProps) => {
+  const editorState = useEditorState(initialContent);
+  return <EditorContext.Provider value={editorState}>{children}</EditorContext.Provider>;
 };
 
 export default EditorRootContextProvider;

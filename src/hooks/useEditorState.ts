@@ -1,13 +1,22 @@
 import { useCallback, useState } from 'react';
 
+interface EditorState {
+  markdownText: string;
+}
+
 const useEditorState = (initialValue: string = '') => {
-  const [markdownText, setMarkdownText] = useState<string>(initialValue);
+  const [state, setState] = useState<EditorState>({
+    markdownText: initialValue,
+  });
 
   const updateMarkdownText = useCallback((text: string) => {
-    setMarkdownText(text);
+    setState(prevState => ({ ...prevState, markdownText: text }));
   }, []);
 
-  return { markdownText, updateMarkdownText };
+  return {
+    ...state,
+    updateMarkdownText,
+  };
 };
 
 export default useEditorState;
