@@ -1,21 +1,21 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { EditorContent } from './editor-content';
-import { EditorRoot } from './editor-root';
+import { Content } from './editor-content';
+import { Root } from './editor-root';
 import { EditorRootProps } from './editor-root/editor-root';
 
-const meta: Meta<typeof EditorRoot> = {
+const meta: Meta<typeof Root> = {
   title: 'MKEditor/Editor',
-  component: EditorRoot,
+  component: Root,
   tags: ['autodocs'],
 };
 
 export default meta;
-type Story = StoryObj<typeof EditorRoot>;
+type Story = StoryObj<typeof Root>;
 
 export const RootWithContent: Story = {
   render: (args: EditorRootProps) => (
-    <EditorRoot {...args}>
-      <EditorContent />
-    </EditorRoot>
+    <Root {...args}>
+      <Content />
+    </Root>
   ),
 };
