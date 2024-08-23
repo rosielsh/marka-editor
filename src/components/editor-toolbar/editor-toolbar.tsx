@@ -1,4 +1,5 @@
-import React, { CSSProperties, useEffect, useRef } from 'react';
+import useVisibilityChange from '@/hooks/useVisibilityChange';
+import React, { CSSProperties } from 'react';
 
 export interface ToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
@@ -14,17 +15,9 @@ const EditorToolbar = ({
   onVisibleChange,
   ...props
 }: ToolbarProps) => {
-  const prevVisibleRef = useRef<boolean>(visible);
+  const { render } = useVisibilityChange(visible, onVisibleChange);
 
-  useEffect(() => {
-    if (prevVisibleRef.current !== visible && onVisibleChange) {
-      onVisibleChange(visible);
-    }
-
-    prevVisibleRef.current = visible;
-  }, [visible, onVisibleChange]);
-
-  if (!visible) {
+  if (!render) {
     return null;
   }
 
