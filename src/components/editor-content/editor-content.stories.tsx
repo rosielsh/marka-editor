@@ -65,11 +65,7 @@ export const Required: Story = {
 };
 
 export const WithCustomPlaceHolder: Story = {
-  render: args => (
-    <EditorRootContextProvider>
-      <EditorContent {...args} />
-    </EditorRootContextProvider>
-  ),
+  render: args => <EditorContent {...args} />,
   args: {
     placeholder: 'Custom placeholder',
   },
