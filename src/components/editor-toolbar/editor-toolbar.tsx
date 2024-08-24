@@ -1,6 +1,5 @@
 import useVisibilityChange from '@/hooks/useVisibilityChange';
-import mergeStyles from '@/utils/mergeStyles';
-import React, { CSSProperties } from 'react';
+import React from 'react';
 
 export interface ToolbarProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
@@ -16,13 +15,6 @@ const EditorToolbar = ({
   onVisibleChange,
   ...props
 }: ToolbarProps) => {
-  const orientationStyle: CSSProperties = {
-    display: 'flex',
-    flexDirection: orientation === 'horizontal' ? 'row' : 'column',
-    gap: '2px',
-  };
-
-  const { style, otherProps } = mergeStyles<React.HTMLAttributes<HTMLDivElement>>(orientationStyle, props);
   const { render } = useVisibilityChange(visible, onVisibleChange);
 
   if (!render) {
@@ -30,7 +22,7 @@ const EditorToolbar = ({
   }
 
   return (
-    <div role="toolbar" data-orientation={orientation} aria-orientation={orientation} style={style} {...otherProps}>
+    <div role="toolbar" data-orientation={orientation} aria-orientation={orientation} {...props}>
       {children}
     </div>
   );
