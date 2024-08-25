@@ -2,50 +2,30 @@ name: Storybook Deployment
 
 on:
   pull_request:
+    types: [opened, synchronize]
     branches:
       - develop
-    types: [opened, synchronize]
+    paths:
+      - '**/*.stories.tsx'
+      - '**/*.stories.ts'
 
 jobs:
-  check_stories_changes:
-    runs-on: ubuntu-latest
-    outputs:
-      stories_changed: ${{ steps.check_stories.outputs.stories_changed }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Check for stories file changes
-        id: check_stories
-        run: |
-          stories_changed=false
-
-          # Get all commit SHAs in this PR
-          commit_list=$(git rev-list ${{ github.event.pull_request.base.sha }}..${{ github.sha }})
-
-          for commit in $commit_list; do
-            parent_commit=$(git rev-parse $commit^)
-            
-            # Check if any .stories files changed in this commit
-            if git diff --name-only $parent_commit $commit | grep -qE '\.stories\.(tsx?|ts)$'; then
-              stories_changed=true
-              break
-            fi
-          done
-
-          echo "stories_changed=$stories_changed" >> $GITHUB_OUTPUT
-
   storybook:
-    needs: check_stories_changes
-    if: needs.check_stories_changes.outputs.stories_changed == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Check if PR just opened
+        id: check_pr_opened
+        run: |
+          if [[ "${{ github.event.action }}" == "opened" ]]; then
+            echo "pr_just_opened=true" >> $GITHUB_OUTPUT
+          else
+            echo "pr_just_opened=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Cache dependencies
         id: cache
@@ -70,9 +50,19 @@ jobs:
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
+            const prJustOpened = '${{ steps.check_pr_opened.outputs.pr_just_opened }}' === 'true';
+            const storybookUrl = '${{ steps.chromatic.outputs.storybookUrl }}';
+
+            let commentBody;
+            if (prJustOpened) {
+              commentBody = `🎉 PR opened! Storybook deployed.\n\n🚀 Storybook URL: ${storybookUrl}`;
+            } else {
+              commentBody = `📚 Stories updated! Storybook redeployed.\n\n🚀 Storybook URL: ${storybookUrl}`;
+            }
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
-              repo: context.repo.name,
-              body: '🚀 Storybook URL: ${{ steps.chromatic.outputs.storybookUrl }}'
-            })
+              repo: context.repo.repo,
+              body: commentBody
+            });
