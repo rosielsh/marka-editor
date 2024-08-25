@@ -4,14 +4,43 @@ on:
   pull_request:
     branches:
       - develop
-    paths:
-      - '**/*.stories.tsx'
-      - '**/*.stories.ts'
+    types: [opened, synchronize]
+
 jobs:
-  storybook:
+  check_stories_changes:
     runs-on: ubuntu-latest
     outputs:
-      status: ${{ job.status }}
+      stories_changed: ${{ steps.check_stories.outputs.stories_changed }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for stories file changes
+        id: check_stories
+        run: |
+          stories_changed=false
+
+          # Get all commit SHAs in this PR
+          commit_list=$(git rev-list ${{ github.event.pull_request.base.sha }}..${{ github.sha }})
+
+          for commit in $commit_list; do
+            parent_commit=$(git rev-parse $commit^)
+            
+            # Check if any .stories files changed in this commit
+            if git diff --name-only $parent_commit $commit | grep -qE '\.stories\.(tsx?|ts)$'; then
+              stories_changed=true
+              break
+            fi
+          done
+
+          echo "stories_changed=$stories_changed" >> $GITHUB_OUTPUT
+
+  storybook:
+    needs: check_stories_changes
+    if: needs.check_stories_changes.outputs.stories_changed == 'true'
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,9 +64,15 @@ jobs:
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: comment PR
-        uses: thollander/actions-comment-pull-request@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Comment PR
+        uses: actions/github-script@v6
         with:
-          message: '🚀 Storybook Url: ${{ steps.chromatic.outputs.storybookUrl }}'
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.name,
+              body: '🚀 Storybook URL: ${{ steps.chromatic.outputs.storybookUrl }}'
+            })
