@@ -5,12 +5,9 @@ on:
     types: [opened, synchronize]
     branches:
       - develop
-    paths:
-      - '**/*.stories.tsx'
-      - '**/*.stories.ts'
 
 jobs:
-  storybook:
+  check_and_deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -18,16 +15,25 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check if PR just opened
-        id: check_pr_opened
+      - name: Check PR status and stories changes
+        id: check_changes
         run: |
           if [[ "${{ github.event.action }}" == "opened" ]]; then
-            echo "pr_just_opened=true" >> $GITHUB_OUTPUT
+            echo "should_run=true" >> $GITHUB_OUTPUT
+            echo "message=🎉 PR opened! Storybook deployed." >> $GITHUB_OUTPUT
           else
-            echo "pr_just_opened=false" >> $GITHUB_OUTPUT
+            git fetch origin ${{ github.base_ref }}
+            changes=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.stories\.(tsx?|ts)$' || true)
+            if [[ -n "$changes" ]]; then
+              echo "should_run=true" >> $GITHUB_OUTPUT
+              echo "message=📚 Stories updated! Storybook redeployed." >> $GITHUB_OUTPUT
+            else
+              echo "should_run=false" >> $GITHUB_OUTPUT
+            fi
           fi
 
       - name: Cache dependencies
+        if: steps.check_changes.outputs.should_run == 'true'
         id: cache
         uses: actions/cache@v3
         with:
@@ -35,10 +41,11 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-storybook
 
       - name: Dependency install
-        if: steps.cache.outputs.cache-hit != 'true'
+        if: steps.check_changes.outputs.should_run == 'true' && steps.cache.outputs.cache-hit != 'true'
         run: npm ci
 
       - name: Publish to Chromatic
+        if: steps.check_changes.outputs.should_run == 'true'
         id: chromatic
         uses: chromaui/action@v1
         with:
@@ -46,23 +53,17 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Comment PR
+        if: steps.check_changes.outputs.should_run == 'true'
         uses: actions/github-script@v6
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const prJustOpened = '${{ steps.check_pr_opened.outputs.pr_just_opened }}' === 'true';
+            const message = '${{ steps.check_changes.outputs.message }}';
             const storybookUrl = '${{ steps.chromatic.outputs.storybookUrl }}';
-
-            let commentBody;
-            if (prJustOpened) {
-              commentBody = `🎉 PR opened! Storybook deployed.\n\n🚀 Storybook URL: ${storybookUrl}`;
-            } else {
-              commentBody = `📚 Stories updated! Storybook redeployed.\n\n🚀 Storybook URL: ${storybookUrl}`;
-            }
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: commentBody
+              repo: context.repo.name,
+              body: `${message}\n\n🚀 Storybook URL: ${storybookUrl}`
             });
