@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import React from 'react';
 import EditorToolbar from './editor-toolbar';
 
 const meta: Meta<typeof EditorToolbar> = {
@@ -92,19 +91,19 @@ export const WithCustomContent: Story = {
   ),
 };
 
-export const ToggleVisibility: Story = {
-  render: args => {
-    const [isVisible, setIsVisible] = React.useState(true);
+// export const ToggleVisibility: Story = {
+//   render: args => {
+//     const [isVisible, setIsVisible] = React.useState(true);
 
-    return (
-      <div>
-        <button onClick={() => setIsVisible(!isVisible)} style={{ margin: '4px 2px' }}>
-          Toggle Toolbar Visibility
-        </button>
-        <EditorToolbar {...args} visible={isVisible} onVisibleChange={setIsVisible}>
-          <DummyToolbarTextGroup />
-        </EditorToolbar>
-      </div>
-    );
-  },
-};
+//     return (
+//       <div>
+//         <button onClick={() => setIsVisible(!isVisible)} style={{ margin: '4px 2px' }}>
+//           Toggle Toolbar Visibility
+//         </button>
+//         <EditorToolbar {...args} visible={isVisible} onVisibleChange={setIsVisible}>
+//           <DummyToolbarTextGroup />
+//         </EditorToolbar>
+//       </div>
+//     );
+//   },
+// };
