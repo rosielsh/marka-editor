@@ -1,7 +1,7 @@
 name: Storybook Deployment
 
 on:
-  push:
+  pull_request:
     branches:
       - develop
     paths:
@@ -35,3 +35,9 @@ jobs:
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           token: ${{ secrets.GITHUB_TOKEN }}
+      - name: comment PR
+        uses: thollander/actions-comment-pull-request@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          message: '🚀 Storybook Url: ${{ steps.chromatic.outputs.storybookUrl }}'
