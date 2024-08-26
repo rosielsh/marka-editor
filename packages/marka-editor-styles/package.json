@@ -1,0 +1,12 @@
+{
+    "name": "@marka-editor/styles",
+    "version": "0.0.1",
+    "files": [
+        "dist"
+    ],
+    "style": "dist/index.css",
+    "devDependencies": {
+        "postcss": "^8.4.31",
+        "postcss-cli": "^10.1.0"
+    }
+}

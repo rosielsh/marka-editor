@@ -1,69 +1,72 @@
 name: Storybook Deployment
 
 on:
-  pull_request:
-    types: [opened, synchronize]
-    branches:
-      - develop
+    pull_request:
+        types: [opened, synchronize]
+        branches:
+            - develop
+        paths:
+            - "packages/marka-editor/**"
 
 jobs:
-  check_and_deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+    check_and_deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
 
-      - name: Check PR status and stories changes
-        id: check_changes
-        run: |
-          if [[ "${{ github.event.action }}" == "opened" ]]; then
-            echo "should_run=true" >> $GITHUB_OUTPUT
-            echo "message=🎉 PR opened! Storybook deployed." >> $GITHUB_OUTPUT
-          else
-            git fetch origin ${{ github.base_ref }}
-            changes=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '\.stories\.(tsx?|ts)$' || true)
-            if [[ -n "$changes" ]]; then
-              echo "should_run=true" >> $GITHUB_OUTPUT
-              echo "message=📚 Stories updated! Storybook redeployed." >> $GITHUB_OUTPUT
-            else
-              echo "should_run=false" >> $GITHUB_OUTPUT
-            fi
-          fi
+            - name: Check PR status and stories changes
+              id: check_changes
+              run: |
+                  if [[ "${{ github.event.action }}" == "opened" ]]; then
+                    echo "should_run=true" >> $GITHUB_OUTPUT
+                    echo "message=🎉 PR opened! Storybook deployed." >> $GITHUB_OUTPUT
+                  else
+                    git fetch origin ${{ github.base_ref }}
+                    changes=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep -E '^packages/marka-editor/.*\.stories\.(tsx?|ts)$' || true)
+                    if [[ -n "$changes" ]]; then
+                      echo "should_run=true" >> $GITHUB_OUTPUT
+                      echo "message=📚 Stories updated! Storybook redeployed." >> $GITHUB_OUTPUT
+                    else
+                      echo "should_run=false" >> $GITHUB_OUTPUT
+                    fi
+                  fi
 
-      - name: Cache dependencies
-        if: steps.check_changes.outputs.should_run == 'true'
-        id: cache
-        uses: actions/cache@v3
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-storybook
+            - name: Cache dependencies
+              if: steps.check_changes.outputs.should_run == 'true'
+              id: cache
+              uses: actions/cache@v3
+              with:
+                  path: "**/node_modules"
+                  key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}-storybook
 
-      - name: Dependency install
-        if: steps.check_changes.outputs.should_run == 'true' && steps.cache.outputs.cache-hit != 'true'
-        run: npm ci
+            - name: Dependency install
+              if: steps.check_changes.outputs.should_run == 'true' && steps.cache.outputs.cache-hit != 'true'
+              run: npm ci
 
-      - name: Publish to Chromatic
-        if: steps.check_changes.outputs.should_run == 'true'
-        id: chromatic
-        uses: chromaui/action@v1
-        with:
-          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+            - name: Publish to Chromatic
+              if: steps.check_changes.outputs.should_run == 'true'
+              id: chromatic
+              uses: chromaui/action@v1
+              with:
+                  projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  workingDir: packages/marka-editor
 
-      - name: Comment PR
-        if: steps.check_changes.outputs.should_run == 'true'
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            const message = '${{ steps.check_changes.outputs.message }}';
-            const storybookUrl = '${{ steps.chromatic.outputs.storybookUrl }}';
+            - name: Comment PR
+              if: steps.check_changes.outputs.should_run == 'true'
+              uses: actions/github-script@v7
+              with:
+                  github-token: ${{secrets.GITHUB_TOKEN}}
+                  script: |
+                      const message = '${{ steps.check_changes.outputs.message }}';
+                      const storybookUrl = '${{ steps.chromatic.outputs.storybookUrl }}';
 
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.name,
-              body: `${message}\n\n🚀 Storybook URL: ${storybookUrl}`
-            });
+                      github.rest.issues.createComment({
+                        issue_number: context.issue.number,
+                        owner: context.repo.owner,
+                        repo: context.repo.name,
+                        body: `${message}\n\n🚀 Storybook URL: ${storybookUrl}`
+                      });
