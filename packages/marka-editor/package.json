@@ -1,5 +1,5 @@
 {
-  "name": "@marka-editor",
+  "name": "@marka-editor/core",
   "private": false,
   "version": "0.0.1",
   "type": "module",
