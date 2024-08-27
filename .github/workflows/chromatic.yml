@@ -59,6 +59,7 @@ jobs:
 
             - name: Build Storybook
               run: npx build-storybook -- --output-dir storybook-static
+              working-directory: packages/marka-editor
 
             - name: Publish to Chromatic
               if: steps.check_changes.outputs.should_run == 'true'
