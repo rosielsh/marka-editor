@@ -6,7 +6,7 @@
         "dev": "turbo dev",
         "lint": "turbo lint",
         "storybook": "turbo storybook",
-        "build-storybook": "storybook build",
+        "build-storybook": "storybook build -o storybook-static",
         "format": "prettier --write \"**/*.{ts,tsx,md}\""
     },
     "devDependencies": {
