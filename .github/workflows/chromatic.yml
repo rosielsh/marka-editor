@@ -58,7 +58,7 @@ jobs:
               run: sed -i '/storybook-static/d' .gitignore
 
             - name: Build Storybook
-              run: npm run build-storybook -- --output-dir storybook-static
+              run: npx run build-storybook -- --output-dir storybook-static
 
             - name: Publish to Chromatic
               if: steps.check_changes.outputs.should_run == 'true'
