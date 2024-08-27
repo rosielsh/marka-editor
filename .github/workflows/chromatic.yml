@@ -54,6 +54,9 @@ jobs:
                   cd packages/marka-editor
                   npm ci
 
+            - name: Remove storybook-static from .gitignore
+              run: sed -i 'storybook-static/d' .gitignore
+
             - name: Build Storybook
               run: npm run build-storybook -- --output-dir storybook-static
 
