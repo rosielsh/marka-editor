@@ -53,7 +53,6 @@ jobs:
               with:
                   projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
                   token: ${{ secrets.GITHUB_TOKEN }}
-                  workingDir: packages/marka-editor
 
             - name: Comment PR
               if: steps.check_changes.outputs.should_run == 'true'
