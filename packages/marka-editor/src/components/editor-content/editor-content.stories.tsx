@@ -2,7 +2,7 @@ import EditorRootContextProvider from '@/providers/EditorRootContextProvider';
 import type { Meta, StoryObj } from '@storybook/react';
 import EditorContent from './editor-content';
 
-const meta: Meta<typeof EditorContent> = {
+const meta: Meta = {
   title: 'MKEditor/EditorContent',
   component: EditorContent,
   argTypes: {
@@ -26,7 +26,7 @@ const meta: Meta<typeof EditorContent> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof EditorContent>;
+type Story = StoryObj;
 
 export const Default: Story = {
   render: args => <EditorContent {...args} />,
@@ -85,3 +85,5 @@ export const WithCustomStyles: Story = {
     placeholder: 'Custom styled textarea',
   },
 };
+
+// test
