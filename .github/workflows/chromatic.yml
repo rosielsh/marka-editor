@@ -64,7 +64,7 @@ jobs:
                   projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
                   token: ${{ secrets.GITHUB_TOKEN }}
                   workingDir: packages/marka-editor
-                  storybookBuildDir: packages/marka-editor/storybook-static
+                  storybookBuildDir: storybook-static
 
             - name: Comment PR
               if: steps.check_changes.outputs.should_run == 'true'
