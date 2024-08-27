@@ -17,6 +17,11 @@ jobs:
               with:
                   fetch-depth: 0
 
+            - name: Setup Node.js
+              uses: actions/setup-node@v2
+              with:
+                  node-version: "21"
+
             - name: Check PR status and stories changes
               id: check_changes
               run: |
@@ -44,7 +49,10 @@ jobs:
 
             - name: Dependency install
               if: steps.check_changes.outputs.should_run == 'true' && steps.cache.outputs.cache-hit != 'true'
-              run: npm ci
+              run: |
+                  npm ci
+                  cd packages/marka-editor
+                  npm ci
 
             - name: Publish to Chromatic
               if: steps.check_changes.outputs.should_run == 'true'
@@ -53,6 +61,7 @@ jobs:
               with:
                   projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
                   token: ${{ secrets.GITHUB_TOKEN }}
+                  storybookBuildDir: storybook-static
 
             - name: Comment PR
               if: steps.check_changes.outputs.should_run == 'true'
